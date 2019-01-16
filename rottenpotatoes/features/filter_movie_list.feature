@@ -23,11 +23,42 @@ Background: movies have been added to database
   Then 10 seed movies should exist
 
 Scenario: restrict to movies with 'PG' or 'R' ratings
+  Given the following movies exist:
+  | title                   | rating | release_date |
+  | The Terminator          | R      | 26-Oct-1984  |
+  | The Incredibles         | PG     | 5-Nov-2004   |
+  | Aladdin                 | G      | 25-Nov-1992  |
+  | The Help                | PG-13  | 10-Aug-2011  |
+  | Scary Movie             | NC-17  | 12-Jun-1981  |
+  Given I am on the RottenPotatoes home page
   # enter step(s) to check the 'PG' and 'R' checkboxes
+  And I check the following ratings: ratings[R] ratings[PG]
   # enter step(s) to uncheck all other checkboxes
+  And I uncheck the following ratings: ratings[G] ratings[PG-13] ratings[NC-17]
   # enter step to "submit" the search form on the homepage
+  And I press "Refresh"
   # enter step(s) to ensure that PG and R movies are visible
+  Then I should see "The Terminator"
+  And I should see "The Incredibles"
   # enter step(s) to ensure that other movies are not visible
+  And I should not see "Aladdin"
+  And I should not see "The Help"
+  And I should not see "Scary Movie"
 
 Scenario: all ratings selected
-  # see assignment
+  Given the following movies exist:
+  | title                   | rating | release_date |
+  | Aladdin                 | G      | 25-Nov-1992  |
+  | The Terminator          | R      | 26-Oct-1984  |
+  | When Harry Met Sally    | R      | 21-Jul-1989  |
+  | The Help                | PG-13  | 10-Aug-2011  |
+  | Chocolat                | PG-13  | 5-Jan-2001   |
+  | Amelie                  | R      | 25-Apr-2001  |
+  | 2001: A Space Odyssey   | G      | 6-Apr-1968   |
+  | The Incredibles         | PG     | 5-Nov-2004   |
+  | Raiders of the Lost Ark | PG     | 12-Jun-1981  |
+  | Chicken Run             | G      | 21-Jun-2000  |
+  And I check the following ratings: ratings[G] ratings[PG] ratings[PG-13] ratings[NC-17] ratings[R] 
+  And  I am on the RottenPotatoes home page
+  And I press "Refresh"
+  Then I should see all the movies
